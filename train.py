@@ -12,6 +12,7 @@ from model import SegNet
 def main():
 
     # Prepare training data.
+    os.makedirs('./temp/', exist_ok=True)
     if not os.path.exists('./temp/train_x.npy') or not os.path.exists('./temp/train_y.npy'):
         train_x, train_y = dataset.load(folder='train')
         np.save('./temp/train_x.npy', train_x)
@@ -46,7 +47,6 @@ def main():
         write_graph=True,
         write_images=True)
 
-    os.makedirs('./temp/', exist_ok=True)
     checkpoint = keras.callbacks.ModelCheckpoint(
         filepath='./temp/model-{epoch:04d}.h5',
         monitor='val_loss',
