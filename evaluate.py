@@ -15,16 +15,13 @@ def main():
 
     # Parse arguments.
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model', type=str)
+    parser.add_argument('-m', '--model', type=str,
+                        default='./temp/**/model-*.h5')
     parser.add_argument('-N', type=int, default=10)
     args = parser.parse_args()
 
     if args.model is None:
         print('You need to specify model file path using -m(--model) option.')
-        exit()
-
-    if args.model != 'all' and not os.path.exists(args.model):
-        print(f'Specified model({args.model}) was not found on file system.')
         exit()
 
     # Prepare training data.
@@ -52,24 +49,31 @@ def main():
 
     # Prepare model.
     model = SegNet()
-    paths = sorted(glob.glob('./temp/*.h5') if args.model == 'all' else [args.model])
+    paths = sorted(glob.glob(args.model))
 
     for path in paths:
+        print(path)
+
         model.load_weights(path)
-        filename, ext = os.path.splitext(os.path.basename(path))
-
+        head, tail = os.path.split(path)
+        filename, ext = os.path.splitext(tail)
+        
         # Save images.
-        os.makedirs(f'./temp/{filename}/', exist_ok=True)
+        os.makedirs(f'{head}/{filename}/', exist_ok=True)
         N = args.N
-        for i, x, y, z in zip(range(N), train_x[:N], model.predict(train_x[:N]), train_y[:N]):
-            cv2.imwrite(f'./temp/{filename}/train-{i}-x.png', x * 255)
-            cv2.imwrite(f'./temp/{filename}/train-{i}-y.png', y[:, :, 1] * 255)
-            cv2.imwrite(f'./temp/{filename}/train-{i}-z.png', z[:, :, 1] * 255)
+        for i, x, y, t in zip(range(N), train_x[:N], model.predict(train_x[:N]), train_y[:N]):
+            z = np.dstack((x, y))
+            cv2.imwrite(f'{head}/{filename}/train-{i}-input.png', x * 255)
+            cv2.imwrite(f'{head}/{filename}/train-{i}-prediction.png', y * 255)
+            cv2.imwrite(f'{head}/{filename}/train-{i}-prediction+.png', z * 255)
+            cv2.imwrite(f'{head}/{filename}/train-{i}-teaching.png', t * 255)
 
-        for i, x, y, z in zip(range(N), test_x[:N], model.predict(test_x[:N]), test_y[:N]):
-            cv2.imwrite(f'./temp/{filename}/test-{i}-x.png', x * 255)
-            cv2.imwrite(f'./temp/{filename}/test-{i}-y.png', y[:, :, 1] * 255)
-            cv2.imwrite(f'./temp/{filename}/test-{i}-z.png', z[:, :, 1] * 255)
+        for i, x, y, t in zip(range(N), test_x[:N], model.predict(test_x[:N]), test_y[:N]):
+            z = np.dstack((x, y))
+            cv2.imwrite(f'{head}/{filename}/test-{i}-input.png', x * 255)
+            cv2.imwrite(f'{head}/{filename}/test-{i}-prediction.png', y * 255)
+            cv2.imwrite(f'{head}/{filename}/test-{i}-prediction+.png', z * 255)
+            cv2.imwrite(f'{head}/{filename}/test-{i}-teaching.png', t * 255)
 
 
 if __name__ == '__main__':

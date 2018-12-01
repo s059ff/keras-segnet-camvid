@@ -1,3 +1,5 @@
+import argparse
+import datetime
 import os
 
 import keras
@@ -10,6 +12,13 @@ from model import SegNet
 
 
 def main():
+
+    # Parse arguments.
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-e', '--epochs', type=int, default=100)
+    parser.add_argument('--checkpoint_interval', type=int, default=10)
+    parser.add_argument('--logging_interval', type=int, default=1)
+    args = parser.parse_args()
 
     # Prepare training data.
     os.makedirs('./temp/', exist_ok=True)
@@ -36,31 +45,37 @@ def main():
 
     # Prepare model.
     model = SegNet()
-    model.compile(loss='categorical_crossentropy',
+    model.compile(loss='binary_crossentropy',
                   optimizer='adadelta',
                   metrics=['accuracy'])
 
     # Training.
+    timestamp = datetime.datetime.now().isoformat()
+    directory = f'./logs/{timestamp}/'
+    os.makedirs(directory, exist_ok=True)
     tensorboard = keras.callbacks.TensorBoard(
-        log_dir='./logs/',
-        histogram_freq=1,
+        log_dir=directory,
+        histogram_freq=args.logging_interval,
         write_graph=True,
         write_images=True)
 
+    filename = 'model-{epoch:04d}.h5'
+    directory = f'./temp/{timestamp}/'
+    os.makedirs(directory, exist_ok=True)
     checkpoint = keras.callbacks.ModelCheckpoint(
-        filepath='./temp/model-{epoch:04d}.h5',
+        filepath=f'{directory}{filename}',
         monitor='val_loss',
         verbose=0,
         save_best_only=False,
         save_weights_only=False,
         mode='auto',
-        period=1)
+        period=args.checkpoint_interval)
 
     model.fit(
         x=train_x,
         y=train_y,
         batch_size=1,
-        epochs=100,
+        epochs=args.epochs,
         verbose=1,
         class_weight='balanced',
         validation_data=(test_x, test_y),

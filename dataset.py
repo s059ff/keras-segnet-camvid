@@ -53,20 +53,18 @@ def load(folder='train'):
         # images = split()
         images = crop(image, cv2.INTER_NEAREST)
         for image in images:
-            label = 8
-            positive = np.where(image == label, 1, 0)
-            negative = 1 - positive
-            annotation = np.dstack((negative, positive))
+            # '8' means CAR class label.
+            annotation = np.where(image == 8, 1, 0).reshape((128, 128, 1))
             annotations.append(annotation)
 
     originals = np.array(originals, dtype=np.float)
     annotations = np.array(annotations, dtype=np.float)
 
     # For debug.
-    # N = 10
+    # N = 3
     # for i, x in zip(range(N), originals[:N]):
-    #     cv2.imwrite(f'./temp/original-{i}.png', x * 255)
-    # for i, y in zip(range(N), map(lambda image: image[:, :, 1], annotations[:N])):
-    #     cv2.imwrite(f'./temp/annotation-{i}.png', y * 255)
+    #     cv2.imwrite(f'./temp/example-input-{i}.png', x * 255)
+    # for i, y in zip(range(N), annotations[:N]):
+    #     cv2.imwrite(f'./temp/example-annotation-{i}.png', y * 255)
 
     return (originals, annotations)
