@@ -20,42 +20,18 @@ def load(folder='train'):
         if not os.path.exists(path2):
             raise Exception(f'{path2} is not found.')
 
-        def split(image):
-            # Split region 3x2.
-            yield image[0:128, 0:128]
-            yield image[0:128, 160:160 + 128]
-            yield image[0:128, 320:320 + 128]
-            yield image[180:180 + 128, 0:128]
-            yield image[180:180 + 128, 160:160 + 128]
-            yield image[180:180 + 128, 320:320 + 128]
-
-        def crop(image, interpolation):
-            h, w, *d = image.shape
-            x = w // 2
-            image = image[:, x - h // 2:x + h // 2]
-            image = cv2.resize(
-                src=image,
-                dsize=(128, 128),
-                interpolation=interpolation)
-            yield image
-
         image = cv2.imread(path1)
-        # images = split()
-        images = crop(image, cv2.INTER_LINEAR)
-        for image in images:
-            image[:, :, 0] = cv2.equalizeHist(image[:, :, 0])
-            image[:, :, 1] = cv2.equalizeHist(image[:, :, 1])
-            image[:, :, 2] = cv2.equalizeHist(image[:, :, 2])
-            image = image.astype(np.float) / 255.
-            originals.append(image)
+        image[:, :, 0] = cv2.equalizeHist(image[:, :, 0])
+        image[:, :, 1] = cv2.equalizeHist(image[:, :, 1])
+        image[:, :, 2] = cv2.equalizeHist(image[:, :, 2])
+        image = image.astype(np.float) / 255.
+        originals.append(image)
 
         image = cv2.imread(path2)[:, :, 0]
-        # images = split()
-        images = crop(image, cv2.INTER_NEAREST)
-        for image in images:
-            # '8' means CAR class label.
-            annotation = np.where(image == 8, 1, 0).reshape((128, 128, 1))
-            annotations.append(annotation)
+        # '8' means CAR class label.
+        annotation = np.where(image == 8, 1, 0)
+        annotation = np.reshape(annotation, (*annotation.shape, 1))
+        annotations.append(annotation)
 
     originals = np.array(originals, dtype=np.float)
     annotations = np.array(annotations, dtype=np.float)

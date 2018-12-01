@@ -15,9 +15,9 @@ def main():
 
     # Parse arguments.
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model', type=str,
-                        default='./temp/**/model-*.h5')
-    parser.add_argument('-N', type=int, default=10)
+    default = './temp/**/model-*.h5'
+    parser.add_argument('-m', '--model', type=str, default=default)
+    parser.add_argument('-n', '--num', type=int, default=10)
     args = parser.parse_args()
 
     if args.model is None:
@@ -57,18 +57,20 @@ def main():
         model.load_weights(path)
         head, tail = os.path.split(path)
         filename, ext = os.path.splitext(tail)
-        
+
         # Save images.
         os.makedirs(f'{head}/{filename}/', exist_ok=True)
-        N = args.N
-        for i, x, y, t in zip(range(N), train_x[:N], model.predict(train_x[:N]), train_y[:N]):
-            z = np.dstack((x, y))
-            cv2.imwrite(f'{head}/{filename}/train-{i}-input.png', x * 255)
-            cv2.imwrite(f'{head}/{filename}/train-{i}-prediction.png', y * 255)
-            cv2.imwrite(f'{head}/{filename}/train-{i}-prediction+.png', z * 255)
-            cv2.imwrite(f'{head}/{filename}/train-{i}-teaching.png', t * 255)
+        num = args.num
 
-        for i, x, y, t in zip(range(N), test_x[:N], model.predict(test_x[:N]), test_y[:N]):
+        # for i, x, y, t in zip(range(num), train_x[:num], model.predict(train_x[:num]), train_y[:num]):
+        #     z = np.dstack((x, y))
+        #     cv2.imwrite(f'{head}/{filename}/train-{i}-input.png', x * 255)
+        #     cv2.imwrite(f'{head}/{filename}/train-{i}-prediction.png', y * 255)
+        #     cv2.imwrite(
+        #         f'{head}/{filename}/train-{i}-prediction+.png', z * 255)
+        #     cv2.imwrite(f'{head}/{filename}/train-{i}-teaching.png', t * 255)
+
+        for i, x, y, t in zip(range(num), test_x[:num], model.predict(test_x[:num]), test_y[:num]):
             z = np.dstack((x, y))
             cv2.imwrite(f'{head}/{filename}/test-{i}-input.png', x * 255)
             cv2.imwrite(f'{head}/{filename}/test-{i}-prediction.png', y * 255)

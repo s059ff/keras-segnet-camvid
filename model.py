@@ -5,7 +5,7 @@ from keras.layers.normalization import BatchNormalization
 from keras.models import Model
 
 
-def SegNet(shape=(128, 128, 3)):
+def SegNet(shape=(360, 480, 3)):
 
     # Input.
     inputs = Input(shape=shape)

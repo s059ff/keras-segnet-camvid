@@ -4,6 +4,7 @@ import os
 
 import keras
 import keras.callbacks
+import keras.utils
 import numpy as np
 import tensorflow as tf
 
@@ -17,7 +18,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', '--epochs', type=int, default=100)
     parser.add_argument('--checkpoint_interval', type=int, default=10)
-    parser.add_argument('--logging_interval', type=int, default=1)
+    parser.add_argument('--batch_size', type=int, default=1)
+    parser.add_argument('--onmemory', action='store_true', default=False)
     args = parser.parse_args()
 
     # Prepare training data.
@@ -55,7 +57,7 @@ def main():
     os.makedirs(directory, exist_ok=True)
     tensorboard = keras.callbacks.TensorBoard(
         log_dir=directory,
-        histogram_freq=args.logging_interval,
+        histogram_freq=0,
         write_graph=True,
         write_images=True)
 
@@ -71,16 +73,43 @@ def main():
         mode='auto',
         period=args.checkpoint_interval)
 
-    model.fit(
-        x=train_x,
-        y=train_y,
-        batch_size=1,
-        epochs=args.epochs,
-        verbose=1,
-        class_weight='balanced',
-        validation_data=(test_x, test_y),
-        shuffle=True,
-        callbacks=[tensorboard, checkpoint])
+    if args.onmemory:
+        model.fit(
+            x=train_x,
+            y=train_y,
+            validation_data=(test_x, test_y),
+            epochs=args.epochs,
+            batch_size=args.batch_size,
+            class_weight='balanced',
+            shuffle=True,
+            verbose=1,
+            callbacks=[tensorboard, checkpoint])
+    else:
+        class Generator(keras.utils.Sequence):
+            def __init__(self, x, y, batch_size):
+                self.x = x
+                self.y = y
+                self.batch_size = batch_size
+                assert len(self.x) == len(self.y)
+                assert len(self.x) % self.batch_size == 0
+
+            def __getitem__(self, index):
+                i = index * self.batch_size
+                x = self.x[i:i + self.batch_size]
+                y = self.y[i:i + self.batch_size]
+                return x, y
+
+            def __len__(self):
+                return len(self.x) // self.batch_size
+
+        model.fit_generator(
+            generator=Generator(train_x, train_y, args.batch_size),
+            validation_data=Generator(test_x, test_y, args.batch_size),
+            epochs=args.epochs,
+            class_weight='balanced',
+            shuffle=True,
+            verbose=1,
+            callbacks=[tensorboard, checkpoint])
 
 
 if __name__ == '__main__':
