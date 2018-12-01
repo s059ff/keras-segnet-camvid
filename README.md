@@ -23,25 +23,34 @@ CamVid データセットを使用したSegNetによる自動車のセグメン�
     ```
 
 ## 実行結果
-入力画像, セグメンテーション結果, 教師信号
+入力データ, 予測データ, 入力データと予測データの合成, 教師データ
 
-<!-- ![](./examples/test-19-x.png) -->
-<!-- ![](./examples/test-19-y.png) -->
-<!-- ![](./examples/test-19-z.png) -->
-![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-19-x.png)
-![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-19-y.png)
-![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-19-z.png)
+<!-- ![](./examples/test-2-input.png) -->
+<!-- ![](./examples/test-2-prediction.png) -->
+<!-- ![](./examples/test-2-prediction+.png) -->
+<!-- ![](./examples/test-2-teaching.png) -->
 
-<!-- ![](./examples/test-26-x.png) -->
-<!-- ![](./examples/test-26-y.png) -->
-<!-- ![](./examples/test-26-z.png) -->
-![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-26-x.png)
-![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-26-y.png)
-![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-26-z.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-2-input.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-2-prediction.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-2-prediction+.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-2-teaching.png)
 
-<!-- ![](./examples/test-54-x.png) -->
-<!-- ![](./examples/test-54-y.png) -->
-<!-- ![](./examples/test-54-z.png) -->
-![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-54-x.png)
-![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-54-y.png)
-![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-54-z.png)
+<!-- ![](./examples/test-4-input.png) -->
+<!-- ![](./examples/test-4-prediction.png) -->
+<!-- ![](./examples/test-4-prediction+.png) -->
+<!-- ![](./examples/test-4-teaching.png) -->
+
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-4-input.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-4-prediction.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-4-prediction+.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-4-teaching.png)
+
+<!-- ![](./examples/test-6-input.png) -->
+<!-- ![](./examples/test-6-prediction.png) -->
+<!-- ![](./examples/test-6-prediction+.png) -->
+<!-- ![](./examples/test-6-teaching.png) -->
+
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-6-input.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-6-prediction.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-6-prediction+.png)
+![](https://github.com/s059ff/keras-segnet-camvid/blob/master/examples/test-6-teaching.png)
