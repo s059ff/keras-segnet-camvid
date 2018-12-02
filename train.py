@@ -16,10 +16,30 @@ def main():
 
     # Parse arguments.
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', '--epochs', type=int, default=100)
-    parser.add_argument('--checkpoint_interval', type=int, default=10)
-    parser.add_argument('--batch_size', type=int, default=1)
-    parser.add_argument('--onmemory', action='store_true', default=False)
+    kwargs = {
+        'type': int,
+        'default': 100,
+        'help': 'The number of times of learning. default: 100'
+    }
+    parser.add_argument('-e', '--epochs', **kwargs)
+    kwargs = {
+        'type': int,
+        'default': 10,
+        'help': 'The frequency of saving model. default: 10'
+    }
+    parser.add_argument('--checkpoint_interval', **kwargs)
+    kwargs = {
+        'type': int,
+        'default': 1,
+        'help': 'The number of samples contained per mini batch. default: 1'
+    }
+    parser.add_argument('--batch_size', **kwargs)
+    kwargs = {
+        'default': False,
+        'action': 'store_true',
+        'help': 'Whether store all data to GPU. If not specified this option, use both CPU memory and GPU memory.'
+    }
+    parser.add_argument('--onmemory', **kwargs)
     args = parser.parse_args()
 
     # Prepare training data.

@@ -15,9 +15,18 @@ def main():
 
     # Parse arguments.
     parser = argparse.ArgumentParser()
-    default = './temp/**/model-*.h5'
-    parser.add_argument('-m', '--model', type=str, default=default)
-    parser.add_argument('-n', '--num', type=int, default=10)
+    kwargs = {
+        'type': str,
+        'default': './temp/**/model-*.h5',
+        'help': 'The model file path pattern. You can use symbol of * and **.'
+    }
+    parser.add_argument('-m', '--model', **kwargs)
+    kwargs = {
+        'type': int,
+        'default': 10,
+        'help': 'The number of samples to evaluate. default: 10'
+    }
+    parser.add_argument('-n', '--num', **kwargs)
     args = parser.parse_args()
 
     if args.model is None:
