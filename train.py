@@ -27,13 +27,13 @@ def main():
         'default': 10,
         'help': 'The frequency of saving model. default: 10'
     }
-    parser.add_argument('--checkpoint_interval', **kwargs)
+    parser.add_argument('-c', '--checkpoint_interval', **kwargs)
     kwargs = {
         'type': int,
         'default': 1,
         'help': 'The number of samples contained per mini batch. default: 1'
     }
-    parser.add_argument('--batch_size', **kwargs)
+    parser.add_argument('-b', '--batch_size', **kwargs)
     kwargs = {
         'default': False,
         'action': 'store_true',
@@ -72,12 +72,12 @@ def main():
                   metrics=['accuracy'])
 
     # Training.
-    timestamp = datetime.datetime.now().isoformat()
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     directory = f'./logs/{timestamp}/'
     os.makedirs(directory, exist_ok=True)
     tensorboard = keras.callbacks.TensorBoard(
         log_dir=directory,
-        histogram_freq=0,
+        histogram_freq=1,
         write_graph=True,
         write_images=True)
 
@@ -93,6 +93,8 @@ def main():
         mode='auto',
         period=args.checkpoint_interval)
 
+    model.save_weights(f'{directory}{filename}'.format(epoch=0))
+
     if args.onmemory:
         model.fit(
             x=train_x,
@@ -106,25 +108,33 @@ def main():
             callbacks=[tensorboard, checkpoint])
     else:
         class Generator(keras.utils.Sequence):
-            def __init__(self, x, y, batch_size):
+            def __init__(self, x, y, batch_size, shuffle):
                 self.x = x
                 self.y = y
                 self.batch_size = batch_size
+                self.indices = np.arange(len(self.x))
+                self.shuffle = shuffle
                 assert len(self.x) == len(self.y)
                 assert len(self.x) % self.batch_size == 0
 
             def __getitem__(self, index):
                 i = index * self.batch_size
-                x = self.x[i:i + self.batch_size]
-                y = self.y[i:i + self.batch_size]
+                indices = range(i, i + self.batch_size)
+                # indices = self.indices[i:i + self.batch_size]
+                x = self.x[indices]
+                y = self.y[indices]
                 return x, y
 
             def __len__(self):
                 return len(self.x) // self.batch_size
 
+            def on_epoch_end(self):
+                if self.shuffle:
+                    self.indices = np.random.permutation(self.indices)
+
         model.fit_generator(
-            generator=Generator(train_x, train_y, args.batch_size),
-            validation_data=Generator(test_x, test_y, args.batch_size),
+            generator=Generator(train_x, train_y, args.batch_size, True),
+            validation_data=Generator(test_x, test_y, args.batch_size, False),
             epochs=args.epochs,
             class_weight='balanced',
             shuffle=True,

@@ -1,14 +1,14 @@
 from keras.layers import Input
 from keras.layers.convolutional import Conv2D, MaxPooling2D, UpSampling2D
-from keras.layers.core import Activation, Reshape
+from keras.layers.core import Activation
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model
 
 
-def SegNet(shape=(360, 480, 3)):
+def SegNet():
 
     # Input.
-    inputs = Input(shape=shape)
+    inputs = Input(shape=(360, 480, 3))
 
     # Encode.
     x = inputs
@@ -52,9 +52,7 @@ def SegNet(shape=(360, 480, 3)):
     x = Activation('relu')(x)
 
     x = Conv2D(1, (1, 1), padding='valid')(x)
-    x = Reshape((shape[0] * shape[1], 1))(x)
     x = Activation('sigmoid')(x)
-    x = Reshape((shape[0], shape[1], 1))(x)
 
     # Output.
     outputs = x
