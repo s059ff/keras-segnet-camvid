@@ -5,10 +5,10 @@ from keras.layers.normalization import BatchNormalization
 from keras.models import Model
 
 
-def SegNet():
+def SegNet(shape):
 
     # Input.
-    inputs = Input(shape=(360, 480, 3))
+    inputs = Input(shape=shape)
 
     # Encode.
     x = inputs

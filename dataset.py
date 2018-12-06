@@ -21,10 +21,11 @@ def load(folder='train'):
             raise Exception(f'{path2} is not found.')
 
         image = cv2.imread(path1)
-        image[:, :, 0] = cv2.equalizeHist(image[:, :, 0])
-        image[:, :, 1] = cv2.equalizeHist(image[:, :, 1])
-        image[:, :, 2] = cv2.equalizeHist(image[:, :, 2])
-        image = image.astype(np.float) / 255.
+        b, g, r = cv2.split(image)
+        b = cv2.equalizeHist(b)
+        g = cv2.equalizeHist(g)
+        r = cv2.equalizeHist(r)
+        image = np.dstack((b, g, r)).astype(np.float) / 255.
         originals.append(image)
 
         image = cv2.imread(path2)[:, :, 0]
@@ -36,11 +37,21 @@ def load(folder='train'):
     originals = np.array(originals, dtype=np.float)
     annotations = np.array(annotations, dtype=np.float)
 
-    # For debug.
-    # N = 3
-    # for i, x in zip(range(N), originals[:N]):
-    #     cv2.imwrite(f'./temp/example-input-{i}.png', x * 255)
-    # for i, y in zip(range(N), annotations[:N]):
-    #     cv2.imwrite(f'./temp/example-annotation-{i}.png', y * 255)
-
     return (originals, annotations)
+
+
+def main():
+    os.makedirs('./temp/', exist_ok=True)
+    train_x, train_y = load(folder='train')
+    val_x, val_y = load(folder='val')
+    test_x, test_y = load(folder='test')
+    np.save('./temp/train_x.npy', train_x)
+    np.save('./temp/train_y.npy', train_y)
+    np.save('./temp/val_x.npy', val_x)
+    np.save('./temp/val_y.npy', val_y)
+    np.save('./temp/test_x.npy', test_x)
+    np.save('./temp/test_y.npy', test_y)
+
+
+if __name__ == '__main__':
+    main()
