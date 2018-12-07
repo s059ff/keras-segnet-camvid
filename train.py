@@ -39,12 +39,6 @@ def main():
         'help': 'Whether store all data to GPU. If not specified this option, use both CPU memory and GPU memory.'
     }
     parser.add_argument('--onmemory', **kwargs)
-    kwargs = {
-        'type': int,
-        'default': 1,
-        'help': 'Frequency of log to tensorboard.'
-    }
-    parser.add_argument('-t', '--tensorboard_histogram_freq', **kwargs)
     args = parser.parse_args()
 
     # Prepare training data.
@@ -69,12 +63,7 @@ def main():
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     directory = f'./logs/{timestamp}/'
     os.makedirs(directory, exist_ok=True)
-    callbacks.append(keras.callbacks.TensorBoard(
-        log_dir=directory,
-        histogram_freq=args.tensorboard_histogram_freq,
-        write_graph=True,
-        write_images=True
-    ))
+    callbacks.append(keras.callbacks.TensorBoard(log_dir=directory))
 
     filename = 'model-{epoch:04d}.h5'
     directory = f'./temp/{timestamp}/'
@@ -129,7 +118,7 @@ def main():
 
         model.fit_generator(
             generator=Generator(train_x, train_y, args.batch_size, True),
-            validation_data=(test_x, test_y),
+            validation_data=Generator(test_x, test_y, args.batch_size, False),
             epochs=args.epochs,
             class_weight='balanced',
             shuffle=True,
