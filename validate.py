@@ -34,8 +34,9 @@ def main():
     args = parser.parse_args()
 
     # Prepare training data.
-    val_x = np.load(f'./temp/{args.type}_x.npy')
-    val_y = np.load(f'./temp/{args.type}_y.npy')
+    dataset = np.load('./temp/dataset.npz')
+    val_x = dataset[f'{args.type}_x']
+    val_y = dataset[f'{args.type}_y']
 
     if args.num < 0 or len(val_x) < args.num:
         args.num = len(val_x)
@@ -55,10 +56,9 @@ def main():
     os.makedirs(f'{head}/{filename}/', exist_ok=True)
 
     for i, x, y, t in zip(range(args.num), val_x, model.predict(val_x[:args.num]), val_y):
-        cv2.imwrite(f'{head}/{filename}/val-{i}-input.png', x * 255)
-        cv2.imwrite(f'{head}/{filename}/val-{i}-prediction.png', y * 255)
-        cv2.imwrite(f'{head}/{filename}/val-{i}-prediction+.png', np.dstack((x, y)) * 255)
-        cv2.imwrite(f'{head}/{filename}/val-{i}-teacher.png', t * 255)
+        cv2.imwrite(f'{head}/{filename}/{args.type}-{i}-input.png', x * 255)
+        cv2.imwrite(f'{head}/{filename}/{args.type}-{i}-prediction.png', y * 255)
+        cv2.imwrite(f'{head}/{filename}/{args.type}-{i}-teacher.png', t * 255)
 
 
 if __name__ == '__main__':
