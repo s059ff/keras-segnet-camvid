@@ -8,10 +8,16 @@ CamVid データセットを使用したSegNetによる自動車のセグメン�
 
 ## 実行方法
 * ネットワークのトレーニング
-    `python train.py`
+
+    ```
+    python train.py
+    ```
 
 * ネットワークのテスト
-    `python validate.py`
+
+    ```
+    python validate.py
+    ```
 
 ## 実行結果
 入力データ, 予測データ, 正解データ
