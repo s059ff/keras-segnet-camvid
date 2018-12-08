@@ -42,10 +42,11 @@ def main():
     args = parser.parse_args()
 
     # Prepare training data.
-    train_x = np.load('./temp/train_x.npy')
-    train_y = np.load('./temp/train_y.npy')
-    test_x = np.load('./temp/test_x.npy')
-    test_y = np.load('./temp/test_y.npy')
+    dataset = np.load('./temp/dataset.npz')
+    train_x = dataset['train_x']
+    train_y = dataset['train_y']
+    test_x = dataset['test_x']
+    test_y = dataset['test_y']
 
     # Prepare tensorflow.
     config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))

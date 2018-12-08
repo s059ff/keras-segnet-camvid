@@ -25,32 +25,38 @@ def load(folder='train'):
         b = cv2.equalizeHist(b)
         g = cv2.equalizeHist(g)
         r = cv2.equalizeHist(r)
-        image = np.dstack((b, g, r)).astype(np.float) / 255.
+        image = np.dstack((b, g, r))
+        image = np.float32(image) / 255.
         originals.append(image)
 
         image = cv2.imread(path2)[:, :, 0]
         # '8' means CAR class label.
         annotation = np.where(image == 8, 1, 0)
+        annotation = np.int8(annotation)
         annotation = np.reshape(annotation, (*annotation.shape, 1))
         annotations.append(annotation)
 
-    originals = np.array(originals, dtype=np.float)
-    annotations = np.array(annotations, dtype=np.float)
+    originals = np.array(originals, dtype=np.float32)
+    annotations = np.array(annotations, dtype=np.int8)
 
     return (originals, annotations)
 
 
 def main():
     os.makedirs('./temp/', exist_ok=True)
+
     train_x, train_y = load(folder='train')
     val_x, val_y = load(folder='val')
     test_x, test_y = load(folder='test')
-    np.save('./temp/train_x.npy', train_x)
-    np.save('./temp/train_y.npy', train_y)
-    np.save('./temp/val_x.npy', val_x)
-    np.save('./temp/val_y.npy', val_y)
-    np.save('./temp/test_x.npy', test_x)
-    np.save('./temp/test_y.npy', test_y)
+    data = {
+        'train_x': train_x,
+        'train_y': train_y,
+        'val_x': val_x,
+        'val_y': val_y,
+        'test_x': test_x,
+        'test_y': test_y,
+    }
+    np.savez_compressed('./temp/dataset.npz', **data)
 
 
 if __name__ == '__main__':
