@@ -9,13 +9,13 @@ CamVid データセットを使用したSegNetによる自動車のセグメン�
 ## 実行方法
 * ネットワークのトレーニング
 
-    ```
+    ```bash
     python train.py
     ```
 
 * ネットワークのテスト
 
-    ```
+    ```bash
     python validate.py
     ```
 
